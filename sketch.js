@@ -7,6 +7,12 @@
 let video;
 let poseNet;
 let poses = [];
+let song, amplitude;
+
+// function preload(){
+//     // song = loadSound('assets/Nana.wav');
+// }
+
 
 function setup() {
   createCanvas(960, 720);
