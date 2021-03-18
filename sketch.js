@@ -3,10 +3,6 @@
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
 
-/* ===
-ml5 Example
-PoseNet example using p5.js
-=== */
 
 let video;
 let poseNet;
