@@ -8,8 +8,14 @@ let video;
 let poseNet;
 let poses = [];
 
+let song, amplitude;
+
+function preload(){
+    song = loadSound('assets/Nana.wav');
+}
+
 function setup() {
-  createCanvas(960, 720);
+  let canvas = createCanvas(960, 720);
   video = createCapture(VIDEO);
   video.size(width, height);
 
@@ -22,6 +28,18 @@ function setup() {
   });
   // Hide the video element, and just show the canvas
   video.hide();
+
+
+  canvas.mouseClicked(toggleSound);
+  amplitude = new p5.Amplitude();
+}
+
+function toggleSound(){
+  if (song.isPlaying() ){
+    song.stop();
+  } else {
+    song.play();
+  }
 }
 
 
@@ -39,6 +57,10 @@ function draw() {
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints()  {
+  // let level = amplitude.getLevel();
+  // let size = map(level, 0, 1, 1, 20);
+
+
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i++) {
     // For each pose detected, loop through all the keypoints
@@ -54,7 +76,7 @@ function drawKeypoints()  {
         // noStroke();
         ellipse(kx, ky, 10, 10);
         
-        strokeWeight(1);
+        // strokeWeight(size);
         line(0,0,kx,ky);
         line(width,0,kx,ky);
         line(0,height,kx,ky);
