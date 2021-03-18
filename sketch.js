@@ -9,15 +9,6 @@ let poseNet;
 let poses = [];
 let song, amplitude;
 
-// function preload(){
-//     // song = loadSound('assets/Nana.wav');
-// }
-
-
-let song, amplitude;
-
-
-
 function setup() {
   song = loadSound('assets/Nana.wav');
   let canvas = createCanvas(960, 720);
