@@ -14,8 +14,13 @@ let song, amplitude;
 // }
 
 
+let song, amplitude;
+
+
+
 function setup() {
-  createCanvas(960, 720);
+  song = loadSound('assets/Nana.wav');
+  let canvas = createCanvas(960, 720);
   video = createCapture(VIDEO);
   video.size(width, height);
 
@@ -28,6 +33,18 @@ function setup() {
   });
   // Hide the video element, and just show the canvas
   video.hide();
+
+
+  canvas.mouseClicked(toggleSound);
+  amplitude = new p5.Amplitude();
+}
+
+function toggleSound(){
+  if (song.isPlaying() ){
+    song.stop();
+  } else {
+    song.play();
+  }
 }
 
 
@@ -36,7 +53,9 @@ function modelReady() {
 }
 
 function draw() {
-  image(video, 0, 0, width, height);
+  // image(video, 0, 0, width, height);
+  background(0);
+  
 
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
@@ -45,6 +64,10 @@ function draw() {
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints()  {
+  let level = amplitude.getLevel();
+  let size = map(level, 0, 1, 1, 15);
+
+
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i++) {
     // For each pose detected, loop through all the keypoints
@@ -60,11 +83,9 @@ function drawKeypoints()  {
         // noStroke();
         ellipse(kx, ky, 10, 10);
         
-        strokeWeight(1);
-        line(0,0,kx,ky);
-        line(width,0,kx,ky);
-        line(0,height,kx,ky);
-        line(width,height,kx,ky);
+        strokeWeight(size);
+        line(0,height/2,kx,ky);
+        line(width,height/2,kx,ky);
       }
     }
   }
