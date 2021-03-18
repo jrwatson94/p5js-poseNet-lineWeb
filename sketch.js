@@ -10,11 +10,10 @@ let poses = [];
 
 let song, amplitude;
 
-function preload(){
-    song = loadSound('assets/Nana.wav');
-}
+
 
 function setup() {
+  song = loadSound('assets/Nana.wav');
   let canvas = createCanvas(960, 720);
   video = createCapture(VIDEO);
   video.size(width, height);
@@ -48,7 +47,9 @@ function modelReady() {
 }
 
 function draw() {
-  image(video, 0, 0, width, height);
+  // image(video, 0, 0, width, height);
+  background(0);
+  
 
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
@@ -57,8 +58,8 @@ function draw() {
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints()  {
-  // let level = amplitude.getLevel();
-  // let size = map(level, 0, 1, 1, 20);
+  let level = amplitude.getLevel();
+  let size = map(level, 0, 1, 1, 15);
 
 
   // Loop through all the poses detected
@@ -76,11 +77,9 @@ function drawKeypoints()  {
         // noStroke();
         ellipse(kx, ky, 10, 10);
         
-        // strokeWeight(size);
-        line(0,0,kx,ky);
-        line(width,0,kx,ky);
-        line(0,height,kx,ky);
-        line(width,height,kx,ky);
+        strokeWeight(size);
+        line(0,height/2,kx,ky);
+        line(width,height/2,kx,ky);
       }
     }
   }
