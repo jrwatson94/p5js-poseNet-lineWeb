@@ -9,11 +9,24 @@ let poseNet;
 let poses = [];
 let song, amplitude;
 
+//BACKGROUND ANIMATION
+let a = 0, mw, mh; 
+let nC = 36;
+let r = 100;
+let headPosition;
+
+
+
+
 function setup() {
   song = loadSound('assets/hamlet.mp3');
   let canvas = createCanvas(960, 720);
   video = createCapture(VIDEO);
   video.size(width, height);
+
+  //BACKGROUND
+  mw = width/2;
+  mh = height/2;
 
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, modelReady);
@@ -43,15 +56,34 @@ function modelReady() {
   select('#status').html('Model Loaded');
 }
 
+function drawCircle(position, upperBound, lowerBound){
+  if(position){
+    r = map(position, 0, height, upperBound, lowerBound);
+  }
+
+  for (let i = 1; i <= nC; i++)
+  {
+    fill(255,200+sin(radians(a+(360/nC)*i))*55,200+cos(a+(360/nC)*i)*55);
+    ellipse(mw+sin(radians(a+(360/nC)*i))*r,mh+cos(radians(a+(360/nC)*i))*r,10*(r/100),10*(r/100));
+  }
+  a++;
+}
+
 function draw() {
   // image(video, 0, 0, width, height);
   background(0);
+
+  //BACKGROUND CREATE CIRCLE
+  fill(0,50);
+  rect(0,0,width,height);
+
   
 
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
   drawSkeleton();
   drawFace();
+  drawCircle(headPosition, 350, 50);
 }
 
 function drawFace(){
@@ -60,6 +92,8 @@ function drawFace(){
     let nose = pose.keypoints[0];
     let leftEye = pose.keypoints[1];
     let rightEye = pose.keypoints[2];
+
+    headPosition = nose.position.y;
     if(
       nose.score > 0.3 &&
       leftEye.score > 0.3 &&
@@ -72,16 +106,11 @@ function drawFace(){
           rightEye.position.x - 50, rightEye.position.y - 10);
 
       }
-
-    
-
   }
 }
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints()  {
-
-  console.log(poses);
   let level = amplitude.getLevel();
   let size = map(level, 0, 1, 1, 15);
   // Loop through all the poses detected
@@ -122,6 +151,7 @@ function drawKeypoints()  {
           line(kx, ky, 100, height);
           line(kx, ky, 0, height- 50);
           line(kx, ky, 0, height - 100);
+          
         }else if(keypoint.part === "leftWrist"){
           strokeWeight(size);
           line(kx, ky, width, height);
