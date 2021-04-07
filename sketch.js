@@ -10,7 +10,7 @@ let poses = [];
 let song, amplitude;
 
 function setup() {
-  song = loadSound('assets/Nana.wav');
+  song = loadSound('assets/hamlet.mp3');
   let canvas = createCanvas(960, 720);
   video = createCapture(VIDEO);
   video.size(width, height);
@@ -65,7 +65,6 @@ function drawFace(){
       leftEye.score > 0.3 &&
       rightEye.score > 0.3 
       ){
-        // scale(3.0);
         fill('red');
         triangle(
           nose.position.x, nose.position.y + 100, 
@@ -81,6 +80,8 @@ function drawFace(){
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints()  {
+
+  console.log(poses);
   let level = amplitude.getLevel();
   let size = map(level, 0, 1, 1, 15);
   // Loop through all the poses detected
@@ -97,13 +98,38 @@ function drawKeypoints()  {
       let kx = keypoint.position.x ;
       let ky = keypoint.position.y;
       if (keypoint.score > 0.2) {
-        fill(255, 0, 0);
+        fill(0, 0, 255);
         // noStroke();
         ellipse(kx, ky, 10, 10);
-        
-        // strokeWeight(size);
-        // line(0,height/2,kx,ky);
-        // line(width,height/2,kx,ky);
+
+        if(keypoint.part === "leftEye" || keypoint.part === "rightEye"){
+          strokeWeight(size);
+          line(kx, 0, kx, ky);
+        }else if(keypoint.part === "leftShoulder"){
+          strokeWeight(size);
+          line(kx, ky, width, ky - 300);
+          line(kx, ky, width, ky);
+          line(kx, ky, width, ky + 300);
+        }else if(keypoint.part === "rightShoulder"){
+          strokeWeight(size);
+          line(kx, ky, 0, ky - 300);
+          line(kx, ky, 0, ky);
+          line(kx, ky, 0, ky + 300);
+        }else if(keypoint.part === "rightWrist"){
+          strokeWeight(size);
+          line(kx, ky, 0, height);
+          line(kx, ky, 50, height);
+          line(kx, ky, 100, height);
+          line(kx, ky, 0, height- 50);
+          line(kx, ky, 0, height - 100);
+        }else if(keypoint.part === "leftWrist"){
+          strokeWeight(size);
+          line(kx, ky, width, height);
+          line(kx, ky, width, height-50);
+          line(kx, ky, width, height -100);
+          line(kx, ky, width - 50, height);
+          line(kx, ky, width - 100, height);
+        }
       }
     }
   }
@@ -119,8 +145,8 @@ function drawSkeleton() {
       let partA = skeleton[j][0];
       let partB = skeleton[j][1];
       
-      stroke(255, 0, 0);
-      strokeWeight(12);
+      stroke(0, 0, 255);
+      strokeWeight(10);
       line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
     }
   }
