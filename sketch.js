@@ -51,22 +51,49 @@ function draw() {
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
   drawSkeleton();
+  drawFace();
+}
+
+function drawFace(){
+  for(let i = 0; i < poses.length; i++){
+    let pose = poses[i].pose;
+    let nose = pose.keypoints[0];
+    let leftEye = pose.keypoints[1];
+    let rightEye = pose.keypoints[2];
+    if(
+      nose.score > 0.3 &&
+      leftEye.score > 0.3 &&
+      rightEye.score > 0.3 
+      ){
+        // scale(3.0);
+        fill('red');
+        triangle(
+          nose.position.x, nose.position.y + 100, 
+          leftEye.position.x + 50, leftEye.position.y - 10, 
+          rightEye.position.x - 50, rightEye.position.y - 10);
+
+      }
+
+    
+
+  }
 }
 
 // A function to draw ellipses over the detected keypoints
 function drawKeypoints()  {
   let level = amplitude.getLevel();
   let size = map(level, 0, 1, 1, 15);
-
-
   // Loop through all the poses detected
   for (let i = 0; i < poses.length; i++) {
     // For each pose detected, loop through all the keypoints
     let pose = poses[i].pose;
-    for (let j = 0; j < pose.keypoints.length; j++) {
+
+    //REMOVE EAR KEYPOINTS- seems like they're a bit distracting
+    let newKeyPoints = pose.keypoints.filter(item => item.part !== "leftEar" && item.part !== "rightEar")
+    for (let j = 0; j < newKeyPoints.length; j++) {
       // A keypoint is an object describing a body part (like rightArm or leftShoulder)
-      let keypoint = pose.keypoints[j];
-      // Only draw an ellipse is the pose probability is bigger than 0.2
+      let keypoint = newKeyPoints[j];
+      // Only draw an ellipse if the pose probability is bigger than 0.2
       let kx = keypoint.position.x ;
       let ky = keypoint.position.y;
       if (keypoint.score > 0.2) {
@@ -74,9 +101,9 @@ function drawKeypoints()  {
         // noStroke();
         ellipse(kx, ky, 10, 10);
         
-        strokeWeight(size);
-        line(0,height/2,kx,ky);
-        line(width,height/2,kx,ky);
+        // strokeWeight(size);
+        // line(0,height/2,kx,ky);
+        // line(width,height/2,kx,ky);
       }
     }
   }
@@ -91,7 +118,9 @@ function drawSkeleton() {
     for (let j = 0; j < skeleton.length; j++) {
       let partA = skeleton[j][0];
       let partB = skeleton[j][1];
+      
       stroke(255, 0, 0);
+      strokeWeight(12);
       line(partA.position.x, partA.position.y, partB.position.x, partB.position.y);
     }
   }
