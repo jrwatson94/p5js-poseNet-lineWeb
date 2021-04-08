@@ -14,6 +14,7 @@ let a = 0, mw, mh;
 let nC = 36;
 let r = 100;
 let headPosition;
+let handRaised = false;
 
 
 
@@ -70,8 +71,11 @@ function drawCircle(position, upperBound, lowerBound){
 }
 
 function draw() {
-  // image(video, 0, 0, width, height);
-  background(0);
+  if(handRaised){
+    background(255,0,0);
+  }else{
+    image(video, 0, 0, width, height);
+  }
 
   //BACKGROUND CREATE CIRCLE
   fill(0,50);
@@ -82,8 +86,6 @@ function draw() {
   // We can call both functions to draw all keypoints and the skeletons
   drawKeypoints();
   drawSkeleton();
-  drawFace();
-  drawCircle(headPosition, 350, 50);
 }
 
 function drawFace(){
@@ -119,7 +121,10 @@ function drawKeypoints()  {
     let pose = poses[i].pose;
 
     //REMOVE EAR KEYPOINTS- seems like they're a bit distracting
-    let newKeyPoints = pose.keypoints.filter(item => item.part !== "leftEar" && item.part !== "rightEar")
+    let newKeyPoints = pose.keypoints.filter(item => item.part !== "leftEar" && item.part !== "rightEar");
+  
+
+    //DRAW KEYPOINTS
     for (let j = 0; j < newKeyPoints.length; j++) {
       // A keypoint is an object describing a body part (like rightArm or leftShoulder)
       let keypoint = newKeyPoints[j];
@@ -151,6 +156,12 @@ function drawKeypoints()  {
           line(kx, ky, 100, height);
           line(kx, ky, 0, height- 50);
           line(kx, ky, 0, height - 100);
+          if(ky < pose.keypoints[0].position.y){
+            console.log("Hand raised");
+            handRaised = true;
+          }else{
+            handRaised = false;
+          }
           
         }else if(keypoint.part === "leftWrist"){
           strokeWeight(size);
@@ -159,6 +170,9 @@ function drawKeypoints()  {
           line(kx, ky, width, height -100);
           line(kx, ky, width - 50, height);
           line(kx, ky, width - 100, height);
+          if(ky < pose.keypoints[0].position.y){
+            handRaised = true;
+          }
         }
       }
     }
